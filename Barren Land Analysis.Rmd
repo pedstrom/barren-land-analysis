@@ -3,12 +3,16 @@ title: "Barren Land Analysis R Notebook"
 output: html_notebook
 ---
 
+## Setup
+
 Install Tidyverse, load ggplot2
 
 ```{r}
 install.packages("tidyverse")
 library(ggplot2)
 ```
+
+## Visualizing the Problem Space
 
 Run a test plot with a uniform distribution:
 
@@ -42,11 +46,11 @@ Inclusive it is! Moving on.
 Let's make a function that takes in a set of coordinate strings, and sets the barrenness of the land. 
 
 ```{r}
-setBarren <- function(df, barren_lands){
+setBarren <- function(df, barren_lands, val=0){
   for (bString in barren_lands){
     b <- unlist(strsplit(bString,"[ ]")) #split on spaces
     b <- as.numeric(b)                   #convert string to numbers
-    df$z[df$x >= b[1] & df$x <= b[3] & df$y >= b[2] & df$y <= b[4]] <- 0
+    df$z[df$x >= b[1] & df$x <= b[3] & df$y >= b[2] & df$y <= b[4]] <- val
   }
   return(df)
 }
@@ -57,5 +61,67 @@ df$z <- 1
 df <- setBarren(df, c("48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"))
 ggplot(df, aes(x, y, fill = z)) + geom_raster()
 ```
+
+## Manual Verification
+
+At this point, I'm a little confused. There are 240,000 square meters of land, and the second sample output has the largest area of 192,608 or ~80% of the land. 
+
+The areas I'd expect an algorithim to find are:
+
+The following two horizontal areas across the top or bottom have 20,800 square meters:
+
+```{r}
+df2 <- df
+df2 <- setBarren(df2, c("0 0 399 51", "0 548 399 599"), .75)
+ggplot(df2, aes(x, y, fill = z)) + geom_raster()
+```
+
+The following two vertical areas on the sides have 28,800 square meters:
+
+```{r}
+df2 <- df
+df2 <- setBarren(df2, c("0 0 47 599", "352 0 399 599"), .75)
+ggplot(df2, aes(x, y, fill = z)) + geom_raster()
+```
+
+And if you segment off each of the 9 areas A through I, then I show the square meters as shown:
+
+A = 23,040
+B = 24,000
+C = 23,808
+D = 22,200
+E = 23,125
+F = ...
+G = ...
+H = ...
+I = ...
+
+Areas B and C highlighted here: 
+
+```{r}
+df2 <- df
+df2 <- setBarren(df2, c("136 408 259 599", "276 408 399 599"), .75)
+ggplot(df2, aes(x, y, fill = z)) + geom_raster()
+```
+
+Wait a second here ... 
+
+I was reading the instructions as largest _rectangle_ of fertile land. This is an incorrect reading of the initial instructions. We are simply looking for areas of _contiguous_ space.
+
+If I exclude the center patch (the obvious 2nd biggest area), then the largest congiguous area would look like this:
+
+```{r}
+df2 <- df
+df2 <- setBarren(df2, c("136 207 259 392"))
+ggplot(df2, aes(x, y, fill = z)) + geom_raster()
+```
+
+And it's area would be:
+
+```{r}
+nrow(df2[df2$z==1,])
+```
+
+## Algorithm 
 
 
