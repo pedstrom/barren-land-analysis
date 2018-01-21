@@ -146,7 +146,7 @@ Well this seems promising: [Flood fill a region of an active device in R](https:
 ```{r}
 # z=0 is barren land
 # z=1 is fertile land
-# z=.25 is marked fertile land that we are currently counting
+# z=.75 is marked fertile land that we are currently counting
 dfFlood <- df
 floodFill <- function(xCord, yCord) {
   zVal <- dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z
@@ -154,13 +154,10 @@ floodFill <- function(xCord, yCord) {
   if (zVal == 1) {
     dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z <<- .75
     # left
-    if (xCord > 0) { floodFill(xCord-1, yCord) }
-    # right
-    if (xCord < 399) { floodFill(xCord+1, yCord) }
-    # up
-    if (yCord < 599) { floodFill(xCord, yCord+1) }
-    # down
-    if (yCord > 0) { floodFill(xCord, yCord-1) }
+    if (xCord > 0) { floodFill(xCord-1, yCord) }   #left
+    if (xCord < 399) { floodFill(xCord+1, yCord) } #right
+    if (yCord < 599) { floodFill(xCord, yCord+1) } #up
+    if (yCord > 0) { floodFill(xCord, yCord-1) }   #down
   }
 }
 
@@ -168,5 +165,53 @@ floodFill(0,0)
 ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
 
 ```
+
+Out of memory! Looks like I ran out of memory on this computer after just a percent or two of the problem space. 
+
+```{r}
+100 * nrow(dfFlood[dfFlood$z==.75,]) / 240000
+```
+
+Let's add some complexity and approach this as a queue:
+
+```{r}
+dfFlood <- df
+Q <- data.frame()
+
+# z=0 is barren land
+# z=1 is fertile land
+# z=.75 is marked fertile land that we are currently counting
+floodFill <- function(xCord, yCord) {
+  #paste("flood", xCord, yCord)
+  zVal <- dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z
+  if (is.na(zVal) | zVal == .75 | zVal == 0) { 
+    return()
+  } else { 
+    dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z <<- .75
+    if (xCord > 0) { Q <<- rbind(Q,c(x=xCord-1, y=yCord)) }   #left
+    if (xCord < 399) { Q <<- rbind(Q,c(x=xCord+1, y=yCord)) } #right
+    if (yCord < 599) { Q <<- rbind(Q,c(x=xCord, y=yCord+1)) } #up
+    if (yCord > 0) { Q <<- rbind(Q,c(x=xCord, y=yCord-1)) }   #down
+  }
+}
+```
+
+And then to kick this version off:
+
+```{r}
+# add the origin to the queue to get us started
+# technically this _sets_ the origin, and adds the two adjacent (up and right) to the queue
+floodFill(0,0) 
+
+# process the queue
+while ( nrow(Q) > 0 ) {
+  floodFill(Q[1,]$X1, Q[1,]$X0) #set and add neighbors to queue
+  Q <<- Q[-1,]                  #remove row 1
+}
+
+ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
+```
+
+
 
 
