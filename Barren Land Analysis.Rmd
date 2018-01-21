@@ -124,4 +124,49 @@ nrow(df2[df2$z==1,])
 
 ## Algorithm 
 
+Next up is the algorithm. There are actually two strategies I'd like to investigate. The first is if there are any R-specific tools available to do this. If so, I'd like to go down that route. If I don't find anything in a reasonable amount of time then I'll likely build a solution similar to [Flood fill](https://en.wikipedia.org/wiki/Flood_fill)
+
+#### R-specific tools
+
+Well this seems promising: [Flood fill a region of an active device in R](https://www.r-bloggers.com/flood-fill-a-region-of-an-active-device-in-r/) and [floodFill](https://www.rdocumentation.org/packages/EBImage/versions/4.14.2/topics/floodFill) seems even more promising as it appears more straight-forward. Though it's based on an Image object which I might have trouble generalizing to the data frame I'm currently using.
+
+```{r}
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("EBImage")
+#library("EBImage")
+#floodFill(df2, c(0,0), .5)
+#df3 <- floodFill(data.matrix(df2), c(1,1), .5)
+#ggplot(as.data.frame(df3), aes(x, y, fill = z)) + geom_raster()
+```
+
+... commenting all of this out. I think there is likely a solution here, but I don't know quite enough to get all of the data into the form they are looking for. Might be a good pair-programming effort. 
+
+### Flood fill
+
+```{r}
+# z=0 is barren land
+# z=1 is fertile land
+# z=.25 is marked fertile land that we are currently counting
+dfFlood <- df
+floodFill <- function(xCord, yCord) {
+  zVal <- dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z
+  if (is.na(zVal) | zVal == .75 | zVal == 0) { return() }
+  if (zVal == 1) {
+    dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z <<- .75
+    # left
+    if (xCord > 0) { floodFill(xCord-1, yCord) }
+    # right
+    if (xCord < 399) { floodFill(xCord+1, yCord) }
+    # up
+    if (yCord < 599) { floodFill(xCord, yCord+1) }
+    # down
+    if (yCord > 0) { floodFill(xCord, yCord-1) }
+  }
+}
+
+floodFill(0,0)
+ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
+
+```
+
 
