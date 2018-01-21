@@ -1,19 +1,61 @@
 ---
-title: "R Notebook"
+title: "Barren Land Analysis R Notebook"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+Install Tidyverse, load ggplot2
 
 ```{r}
-plot(cars)
+install.packages("tidyverse")
+library(ggplot2)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+Run a test plot with a uniform distribution:
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+```{r}
+df <- expand.grid(x = 0:399, y = 0:599)
+df$z <- runif(nrow(df))
+ggplot(df, aes(x, y, fill = z)) + geom_raster()
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+Set the land to be default fertil (1) and an area of barren land (0):
+
+```{r}
+df <- expand.grid(x = 0:399, y = 0:599)
+df$z <- 1
+# using test input {“0 292 399 307”}
+df$z[df$x >= 0 & df$x <= 399 & df$y >= 292 & df$y <= 307] <- 0
+ggplot(df, aes(x, y, fill = z)) + geom_raster()
+```
+
+I'm assuming the coordinates are inclusive for the barren land, but that may not be the case. Let's validate the areas manually and compare with the sample output. 
+
+```{r}
+#area of top
+(599-307) * 400
+#area of bottom
+(292-0) * 400
+```
+
+Inclusive it is! Moving on. 
+
+Let's make a function that takes in a set of coordinate strings, and sets the barrenness of the land. 
+
+```{r}
+setBarren <- function(df, barren_lands){
+  for (bString in barren_lands){
+    b <- unlist(strsplit(bString,"[ ]")) #split on spaces
+    b <- as.numeric(b)                   #convert string to numbers
+    df$z[df$x >= b[1] & df$x <= b[3] & df$y >= b[2] & df$y <= b[4]] <- 0
+  }
+  return(df)
+}
+
+# reset our grid
+df <- expand.grid(x = 0:399, y = 0:599)
+df$z <- 1
+df <- setBarren(df, c("48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"))
+ggplot(df, aes(x, y, fill = z)) + geom_raster()
+```
+
 
