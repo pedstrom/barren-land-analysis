@@ -212,13 +212,48 @@ while ( nrow(Q) > 0 ) {
 ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
 ```
 
-Looks like it found the first area successfully! It's area is below. One thing worth noting is that on this Mid 2011 iMac, this took close to 2 hours to complete. Clearly optimization would be helpful here.
+Looks like it found the first area successfully! It's area is below. One thing worth noting is that on this Mid 2011 iMac, this took close to 2 hours to complete. Clearly optimization would be helpful here. I have some ideas on where there are inefficiencies, but let's validate the output and move on to finding all areas first. 
 
 ```{r}
-nrow(dfFlood[dfFlood$z==.75,])
+area <- nrow(dfFlood[dfFlood$z==.75,])
+area
 ```
 
 This is a match to the area shown in the Sample Output. 
 
-### Find all areas
+### Save the result and find the next area
+
+```{r}
+results <- c()
+
+# save the last found area
+results <- c(results, area)
+results
+
+# clear out the found area
+dfFloodLoop <- dfFlood
+dfFloodLoop[dfFloodLoop$z==.75,]$z <- 0
+
+# find next fertile (1) if it exists
+nextFertile <- dfFloodLoop[dfFloodLoop$z==1,][1,]
+
+# reset the queue and populate with the nextFertile coordinates
+Q <- data.frame()
+floodFill(nextFertile$x,nextFertile$y) 
+
+# process the queue
+while ( nrow(Q) > 0 ) {
+  floodFill(Q[1,]$X135, Q[1,]$X208) #set and add neighbors to queue
+  Q <<- Q[-1,]                      #remove row 1
+}
+
+ggplot(dfFloodLoop, aes(x, y, fill = z)) + geom_raster()
+```
+
+### Optimization Ideas
+
+* Use an array instead of a dataframe.
+* Look for ways to minimize double-checking existing areas.
+
+
 
