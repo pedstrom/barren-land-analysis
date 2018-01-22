@@ -212,6 +212,13 @@ while ( nrow(Q) > 0 ) {
 ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
 ```
 
+Looks like it found the first area successfully! It's area is below. One thing worth noting is that on this Mid 2011 iMac, this took close to 2 hours to complete. Clearly optimization would be helpful here.
 
+```{r}
+nrow(dfFlood[dfFlood$z==.75,])
+```
 
+This is a match to the area shown in the Sample Output. 
+
+### Find all areas
 
