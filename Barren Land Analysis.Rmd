@@ -182,7 +182,6 @@ Q <- data.frame()
 # z=1 is fertile land
 # z=.75 is marked fertile land that we are currently counting
 floodFill <- function(xCord, yCord) {
-  #paste("flood", xCord, yCord)
   zVal <- dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z
   if (is.na(zVal) | zVal == .75 | zVal == 0) { 
     return()
@@ -249,6 +248,46 @@ while ( nrow(Q) > 0 ) {
 
 ggplot(dfFloodLoop, aes(x, y, fill = z)) + geom_raster()
 ```
+
+```{r}
+area <- nrow(dfFlood[dfFlood$z==.75,])
+results <- c(results, area)
+results
+```
+
+Whoops. Think I used the wrong data frame here. Needed to put it all into a loop anyway, so here goes:
+
+### Reset and loop
+
+```{r}
+# reset our grid
+df <- expand.grid(x = 0:399, y = 0:599)
+df$z <- 1
+df <- setBarren(df, c("48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"))
+
+# reset results and prep the Q
+results <- c()
+Q <- data.frame(x=integer(), y=integer())
+dfFlood <- df
+
+while (!is.na(nextFertile <- dfFlood[dfFlood$z==1,][1,])) {
+  floodFill(nextFertile$x,nextFertile$y) # prime the Q and next area
+  
+  # process the queue and set all of the area to .75
+  while ( nrow(Q) > 0 ) {
+    floodFill(Q[1,]$X135, Q[1,]$X208) #set and add neighbors to queue
+    Q <<- Q[-1,]                      #remove row 1
+  }
+  
+  area <- nrow(dfFlood[dfFlood$z==.75,]) # count the area
+  results <<- c(results, area)           # save the area into the results
+  dfFlood[dfFlood$z==.75,]$z <<- 0       # mark the area as done
+}
+
+results
+
+```
+
 
 ### Optimization Ideas
 
