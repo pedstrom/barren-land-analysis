@@ -1,6 +1,7 @@
 ---
 title: "Barren Land Analysis R Notebook"
-output: html_notebook
+output:
+  html_notebook: default
 ---
 
 ## Setup
@@ -8,7 +9,7 @@ output: html_notebook
 Install Tidyverse, load ggplot2
 
 ```{r}
-install.packages("tidyverse")
+#install.packages("tidyverse")
 library(ggplot2)
 ```
 
@@ -207,18 +208,22 @@ while ( nrow(Q) > 0 ) {
   floodFill(Q[1,]$X1, Q[1,]$X0) #set and add neighbors to queue
   Q <<- Q[-1,]                  #remove row 1
 }
+```
 
+Hmmm ... this ran all night and didn't retrun. But looking at the plot, it appears to be on the right path with the dark blue section:
+
+```{r}
 ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
 ```
 
-Looks like it found the first area successfully (the dark blue section)! It's area is below. One thing worth noting is that on this Mid 2011 iMac, this took close to 2 hours to complete. Clearly optimization would be helpful here. I have some ideas on where there are inefficiencies, but let's validate the output and move on to finding all areas first. 
+On this Mid 2011 iMac, this took close to 2 hours to complete when I first ran it. Not sure why this didn't complete overnight on this run. The results were correct on the first run: 
 
 ```{r}
 area <- nrow(dfFlood[dfFlood$z==.75,])
 area
 ```
 
-This is a match to the area shown in the Sample Output. 
+This area is a match to the area shown in the Sample Output. 
 
 ### Save the result and find the next area
 
@@ -239,13 +244,17 @@ nextFertile <- dfFloodLoop[dfFloodLoop$z==1,][1,]
 # reset the queue and populate with the nextFertile coordinates
 Q <- data.frame()
 floodFill(nextFertile$x,nextFertile$y) 
+```
 
+```{r}
 # process the queue
 while ( nrow(Q) > 0 ) {
   floodFill(Q[1,]$X135, Q[1,]$X208) #set and add neighbors to queue
   Q <<- Q[-1,]                      #remove row 1
 }
+```
 
+```{r}
 ggplot(dfFloodLoop, aes(x, y, fill = z)) + geom_raster()
 ```
 
@@ -275,24 +284,34 @@ floodFill <- function(xCord, yCord) {
     if (yCord > 0) { Q[nrow(Q)+1,] <<- c(xCord, yCord-1) }   #down
   }
 }
+```
 
+```{r}
 prepQ <- function() {
   nextFertile <- dfFlood[dfFlood$z==1,][1,] # find next area
   floodFill(nextFertile$x,nextFertile$y)    # prime the Q
 }
+```
 
-
+```{r}
 # reset our grid
 df <- expand.grid(x = 0:399, y = 0:599)
 df$z <- 1
 df <- setBarren(df, c("48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"))
+```
 
+```{r}
 # reset results and prep the Q
 results <- c()
 Q <- data.frame(x=integer(), y=integer())
 dfFlood <- df
+```
 
+```{r}
 prepQ()
+```
+
+```{r}
 while ( nrow(Q) > 0 ) {
   
   # process the queue and set all of the area to .75
@@ -306,9 +325,10 @@ while ( nrow(Q) > 0 ) {
 
   prepQ()                                # find the next area if there is one
 }
+```
 
+```{r}
 results
-
 ```
 
 Sweet. This looks like the right data. Let's put it in smallest to largest order:
@@ -323,7 +343,7 @@ Please continue in the [README](README.md) at the section, "Making this runnable
 
 Thank you,
 Peter Edstrom
-peter@edstrom.net
+[peter@edstrom.net](mailto:peter@edstrom.net)
 January 2018
 
 

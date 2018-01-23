@@ -60,7 +60,7 @@ Sample Input | Sample Output
 
 ## Writing the Algorithm
 
-please follow my thought process in [Barren Land Analysis.Rmd](Barren Land Analysis.Rmd). The [pdf](Barren Land Analysis.pdf) and [html](Barren Land Analysis.nb.html) files will also include the code-execution results.
+Please follow my thought process in [Barren Land Analysis.Rmd](Barren Land Analysis.Rmd). The [html](Barren Land Analysis.nb.html) file will also include code-execution results and visualizations.
 
 ## Making this runnable on the command line
 
@@ -76,5 +76,5 @@ TODO
 Thank you for taking the time to review my approach to this challenge!
 
 Peter Edstrom
-peter@edstrom.net
+[peter@edstrom.net](mailto:peter@edstrom.net)
 January 2018
