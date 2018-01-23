@@ -11,6 +11,13 @@
 library(ggplot2)
 args <- commandArgs(trailingOnly = TRUE)
 
+# setup the grid and a few vars 
+#dfFlood <- expand.grid(x = 0:399, y = 0:599)
+dfFlood <- expand.grid(x = 0:9, y = 0:9)
+dfFlood$z <- 1
+results <- c()
+Q <- data.frame(x=integer(), y=integer())
+
 setBarren <- function(df, barren_lands, val=0){
   for (bString in barren_lands){
     b <- unlist(strsplit(bString,"[ ]")) #split on spaces
@@ -24,6 +31,9 @@ setBarren <- function(df, barren_lands, val=0){
 # z=1 is fertile land
 # z=.75 is marked fertile land that we are currently counting
 floodFill <- function(xCord, yCord) {
+  paste("floodFill2")
+  paste(xCord,yCord)
+  
   zVal <- dfFlood[dfFlood$x==xCord & dfFlood$y==yCord,]$z
   if (is.na(zVal) | zVal == .75 | zVal == 0) { 
     return()
@@ -41,18 +51,10 @@ prepQ <- function() {
   floodFill(nextFertile$x,nextFertile$y)    # prime the Q
 }
 
-# setup the grid
-#df <- expand.grid(x = 0:399, y = 0:599)
-df <- expand.grid(x = 0:10, y = 0:10)
-df$z <- 1
-df <- setBarren(df, args)
-
-# reset results and prep the Q
-results <- c()
-Q <- data.frame(x=integer(), y=integer())
-dfFlood <- df
-
+# prep the Q and areas
+dfFlood <- setBarren(dfFlood, args)
 prepQ()
+
 while ( nrow(Q) > 0 ) {
   
   # process the queue and set all of the area to .75
