@@ -162,13 +162,13 @@ floodFill <- function(xCord, yCord) {
 }
 
 floodFill(0,0)
-ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
 
 ```
 
-Out of memory! Looks like I ran out of memory on this computer after just a percent or two of the problem space. 
+Out of memory! Looks like I ran out of memory on this computer after just 1% of the problem space. You can see a thin section of darker blue along the bottom of the following image that shows how many coordinates were calculated along with the % complete calculation:
 
 ```{r}
+ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
 100 * nrow(dfFlood[dfFlood$z==.75,]) / 240000
 ```
 
@@ -211,7 +211,7 @@ while ( nrow(Q) > 0 ) {
 ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
 ```
 
-Looks like it found the first area successfully! It's area is below. One thing worth noting is that on this Mid 2011 iMac, this took close to 2 hours to complete. Clearly optimization would be helpful here. I have some ideas on where there are inefficiencies, but let's validate the output and move on to finding all areas first. 
+Looks like it found the first area successfully (the dark blue section)! It's area is below. One thing worth noting is that on this Mid 2011 iMac, this took close to 2 hours to complete. Clearly optimization would be helpful here. I have some ideas on where there are inefficiencies, but let's validate the output and move on to finding all areas first. 
 
 ```{r}
 area <- nrow(dfFlood[dfFlood$z==.75,])
@@ -255,7 +255,7 @@ results <- c(results, area)
 results
 ```
 
-Whoops. Think I used the wrong data frame here. Needed to put it all into a loop anyway, so here goes:
+Whoops. Think I attempted to process that area with the wrong data frame. Well, I needed to put it all into a loop anyway, so here goes:
 
 ### Reset and loop
 
@@ -302,7 +302,7 @@ while ( nrow(Q) > 0 ) {
   }
   area <- nrow(dfFlood[dfFlood$z==.75,]) # count the area
   results <<- c(results, area)           # save the area into the results
-  dfFlood[dfFlood$z==.75,]$z <<- 0       # mark the area as done
+  dfFlood[dfFlood$z==.75,]$z <- 0        # mark the area as done
 
   prepQ()                                # find the next area if there is one
 }
@@ -311,11 +311,21 @@ results
 
 ```
 
+Sweet. This looks like the right data. Let's put it in smallest to largest order:
 
-### Optimization Ideas
+```{r}
+results[order(results)]
+```
 
-* Use an array instead of a dataframe.
-* Look for ways to minimize double-checking existing areas.
+### Next Steps
+
+Please continue in the [README](README.md) at the section, "Making this runnable on the command line".
+
+Thank you,
+Peter Edstrom
+peter@edstrom.net
+January 2018
+
 
 
 

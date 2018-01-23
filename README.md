@@ -58,5 +58,23 @@ Sample Input | Sample Output
 * Getting closer ... [geom_bin2d() and stat_bin_2d()](http://ggplot2.tidyverse.org/reference/geom_bin2d.html)
 * geom_tile, part of [Tidyverse/ggplot2](http://ggplot2.tidyverse.org/reference/geom_tile.html)
 
+## Writing the Algorithm
+
+please follow my thought process in [Barren Land Analysis.Rmd](Barren Land Analysis.Rmd). The [pdf](Barren Land Analysis.pdf) and [html](Barren Land Analysis.nb.html) files will also include the code-execution results.
 
 ## Making this runnable on the command line
+
+TODO
+
+### A note on Optimization
+
+* Use an array instead of a dataframe.
+* Look for ways to minimize double-checking existing areas.
+
+## Thank You
+
+Thank you for taking the time to review my approach to this challenge!
+
+Peter Edstrom
+peter@edstrom.net
+January 2018
