@@ -54,7 +54,7 @@ Sample Input | Sample Output
 
 * To start, I’d like to be able to see what this plot looks like. Partially because visualizations are cool, but more seriously because they help with understanding the problem space. It’s easy to get lost in a sea of numbers.
 * Since I know very little about these types of tools, I’m also expecting that the visualization tools will guide me towards a reasonable internal data model. 
-* Google searches are turning up potential terms and tools to narrow in on: Waffle Chart, Heatmap, Spatial, geom_tile(), ggmap(). The waffle chart on [this page](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html) is intriguing. 
+* Google searches are turning up potential terms and tools to narrow in on: Waffle Chart, Heat map, Spatial, geom_tile(), ggmap(). The waffle chart on [this page](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html) is intriguing. 
 * Getting closer ... [geom_bin2d() and stat_bin_2d()](http://ggplot2.tidyverse.org/reference/geom_bin2d.html)
 * geom_tile, part of [Tidyverse/ggplot2](http://ggplot2.tidyverse.org/reference/geom_tile.html)
 
@@ -64,12 +64,17 @@ Please follow my thought process in [Barren Land Analysis.Rmd](Barren Land Analy
 
 ## Making this runnable on the command line
 
-TODO
+Code is in an R file ([Barren Land Analysis.R](Barren Land Analysis.R)) that can be executed with Rscript as follows:
+
+`Rscript Barren\ Land\ Analysis.R "0 292 399 307"`
+`Rscript Barren\ Land\ Analysis.R "48 192 351 207" "48 392 351 407" "120 52 135 547" "260 52 275 547"`
 
 ### A note on Optimization
 
-* Use an array instead of a dataframe.
-* Look for ways to minimize double-checking existing areas.
+This performs horribly. Need to fix. Some ideas:
+
+* Use an array instead of a data frame.
+* Look for ways to minimize double-checking areas that have already been checked/confirmed.
 
 ## Thank You
 

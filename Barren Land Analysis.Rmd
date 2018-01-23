@@ -23,7 +23,7 @@ df$z <- runif(nrow(df))
 ggplot(df, aes(x, y, fill = z)) + geom_raster()
 ```
 
-Set the land to be default fertil (1) and an area of barren land (0):
+Set the land to be default fertile (1) and an area of barren land (0):
 
 ```{r}
 df <- expand.grid(x = 0:399, y = 0:599)
@@ -67,7 +67,7 @@ ggplot(df, aes(x, y, fill = z)) + geom_raster()
 
 At this point, I'm a little confused. There are 240,000 square meters of land, and the second sample output has the largest area of 192,608 or ~80% of the land. 
 
-The areas I'd expect an algorithim to find are:
+The areas I'd expect an algorithm to find are:
 
 The following two horizontal areas across the top or bottom have 20,800 square meters:
 
@@ -109,7 +109,7 @@ Wait a second here ...
 
 I was reading the instructions as largest _rectangle_ of fertile land. This is an incorrect reading of the initial instructions. We are simply looking for areas of _contiguous_ space.
 
-If I exclude the center patch (the obvious 2nd biggest area), then the largest congiguous area would look like this:
+If I exclude the center patch (the obvious 2nd biggest area), then the largest contiguous area would look like this:
 
 ```{r}
 df2 <- df
@@ -210,7 +210,7 @@ while ( nrow(Q) > 0 ) {
 }
 ```
 
-Hmmm ... this ran all night and didn't retrun. But looking at the plot, it appears to be on the right path with the dark blue section:
+Hmmm ... this ran all night and didn't return. But looking at the plot, it appears to be on the right path with the dark blue section:
 
 ```{r}
 ggplot(dfFlood, aes(x, y, fill = z)) + geom_raster()
@@ -339,7 +339,7 @@ results[order(results)]
 
 ### Next Steps
 
-Please continue in the [README](README.md) at the section, "Making this runnable on the command line".
+Please continue in the [README](README.md) at the section, "Making this run-able on the command line".
 
 Thank you,
 Peter Edstrom
