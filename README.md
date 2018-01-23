@@ -10,12 +10,12 @@ I have a [LinkedIn Profile](https://www.linkedin.com/in/peteredstrom/) and you c
 
 * After reviewing the 3 case studies, I decided to give the 2nd case study go: _Barren Land Analysis_.
 * _Barren Land Analysis_ represents to me an interesting GIS and mapping application, and one that piques my data science interests. I’m not sure how to do it. But I have some ideas to explore in R and potentially in PostgreSQL (it has good mapping tools built in, I’m told). 
-* _myRetail RESTful services_ could be done with Rails and scaffolding would get you well on the way (there are views built in for json, right?). NoSQL is a tool I haven’t had need to dig into up to this point in my career, and it would be fun to do so. But for now I’ll pass. 
-* _Document Search_ - I think I’d do this one with Elastic Search, though at least for the first pass at the first 2 methods a command line tool like grep might work fine. 
+* _myRetail RESTful services_ could be done with Rails and scaffolding would get you well on the way (there are views built in for json, right?). NoSQL is a tool I haven’t had need to dig into up to this point in my career and it would be fun to do so. But for now I’ll pass. 
+* _Document Search_ - I think I’d do this one with Elastic Search. Though at least for the first 2 methods, a command line tool like grep might work fine. 
 
 ## The Choice to use R Project for Statistical Computing
 
-There was no requirement to choose a specific language and I chose to address this challenge using [R Project](https://www.r-project.org).
+There was no requirement to choose a specific language, so I chose to address this challenge using [R Project](https://www.r-project.org).
 
 There are a few reasons for this choice: 
 
@@ -60,20 +60,21 @@ Sample Input | Sample Output
 
 ## Writing the Algorithm
 
-Please follow my thought process in [Barren Land Analysis.Rmd](Barren Land Analysis.Rmd). The [html](Barren Land Analysis.nb.html) file will also include code-execution results and visualizations.
+Please follow my thought process in [Barren Land Analysis.Rmd](Barren\ Land\ Analysis.Rmd). The [html](Barren\ Land\ Analysis.nb.html) file will also include code-execution results and visualizations.
 
 ## Making this runnable on the command line
 
-Code is in an R file ([Barren Land Analysis.R](Barren Land Analysis.R)) that can be executed with Rscript as follows:
+Code is in an R file ([Barren Land Analysis.R](Barren\ Land\ Analysis.R)) that can be executed with Rscript as follows:
 
 `Rscript Barren\ Land\ Analysis.R "0 292 399 307"`
+
 `Rscript Barren\ Land\ Analysis.R "48 192 351 207" "48 392 351 407" "120 52 135 547" "260 52 275 547"`
 
 ### A note on Optimization
 
-This performs horribly. Need to fix. Some ideas:
+This performs horribly. Pretty sure I'm doing something wrong, but a few ideas on how to speed things up:
 
-* Use an array instead of a data frame.
+* Use an array instead of a data frame. (I think this is likely the major source of the slow performance)
 * Look for ways to minimize double-checking areas that have already been checked/confirmed.
 
 ## Thank You
